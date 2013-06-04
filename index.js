@@ -41,7 +41,7 @@ module.exports.post = function(url, data, callback, context) {
       callback(null, xhr, data);
     }
   , error: function(xhr, text, error) {
-      callback(new Error(xhr.responseText), xhr);
+      callback(xhr.responseText, xhr);
     }
   });
 };
@@ -72,7 +72,7 @@ module.exports.get = function(url, callback, context) {
       callback(null, xhr, data);
     }
   , error: function(xhr, text, error) {
-      callback(new Error(xhr.responseText), xhr);
+      callback(xhr.responseText, xhr);
     }
   });
 };
@@ -108,7 +108,7 @@ module.exports.postFile = function(url, data, callback, context) {
       callback(null, xhr, data);
     }
   , error: function(xhr, text, error) {
-      callback(new Error(xhr.responseText), xhr);
+      callback(xhr.responseText, xhr);
     }
   });
 };
