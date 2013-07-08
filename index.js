@@ -8,10 +8,27 @@ var $ = require('jquery')
   , VERSION = window.API_VERSION;
 
 /**
+ * Headers
+ */
+
+var headers = {
+  'X-Perfect-API-Version': VERSION
+, 'Cache-Control': 'no-cache'
+};
+
+/**
  * Expose `getHeaders`
  */
 
 module.exports.getHeaders = getHeaders;
+
+/**
+ * Expose `setHeader`
+ */
+
+module.exports.setHeader = function(key, value) {
+  headers[key] = value;
+};
 
 /**
  * Custom POST method
@@ -118,11 +135,6 @@ module.exports.postFile = function(url, data, callback, context) {
  */
 
 function getHeaders() {
-  var headers = {
-    'X-Perfect-API-Version': VERSION
-  , 'Cache-Control': 'no-cache'
-  };
-
   if (window.device) {
     headers['X-Perfect-Device-ID'] = window.device.uuid;
     headers['X-Perfect-Token'] = localStorage.getItem('token');
