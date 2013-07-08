@@ -1,5 +1,5 @@
 {
-  "name": "component-xhr",
+  "name": "xhr",
   "repo": "mobqueue/component-xhr",
   "description": "Custom XHR for Perfect sites",
   "version": "0.0.1",
