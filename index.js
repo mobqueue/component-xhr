@@ -3,17 +3,17 @@
  * Dependencies
  */
 
-var $ = require('jquery')
-  , BASE_URL = window.API_URL
-  , VERSION = window.API_VERSION;
+var $ = require('jquery');
+var BASE_URL = window.API_URL;
+var VERSION = window.API_VERSION;
 
 /**
  * Headers
  */
 
 var headers = {
-  'X-Perfect-API-Version': VERSION
-, 'Cache-Control': 'no-cache'
+  'X-Perfect-API-Version': VERSION, 
+  'Cache-Control': 'no-cache'
 };
 
 /**
@@ -21,6 +21,12 @@ var headers = {
  */
 
 module.exports.getHeaders = getHeaders;
+
+/**
+ * Expose `get`
+ */
+
+module.exports.get = get;
 
 /**
  * Expose `setHeader`
@@ -47,18 +53,18 @@ module.exports.post = function(url, data, callback, context) {
   }
   
   $.ajax({
-    url: BASE_URL + url
-  , type: 'POST'
-  , headers: getHeaders()
-  , xhrFields: {
+    url: BASE_URL + url, 
+    type: 'POST', 
+    headers: getHeaders(), 
+    xhrFields: {
       withCredentials: window.device === undefined
-    }
-  , data: data
-  , success: function(data, text, xhr) {
+    }, 
+    data: data, 
+    success: function(data, text, xhr) {
       callback(null, xhr, data);
-    }
-  , error: function(xhr, text, error) {
-      callback(xhr.responseText, xhr);
+    }, 
+    error: function(xhr, text, error) {
+      callback(xhr.responseText || xhr.statusText, xhr);
     }
   });
 };
@@ -71,28 +77,37 @@ module.exports.post = function(url, data, callback, context) {
  * @param {Object} context
  */
 
-module.exports.get = function(url, callback, context) {
+function get(url, callback, context, attemptsLeft) {
   callback = callback || function(){};
   
   if (context) {
     callback = callback.bind(context);
   }
 
+  if (attemptsLeft === undefined) {
+    attemptsLeft = 3;
+  }
+
   $.ajax({
-    url: BASE_URL + url
-  , type: 'GET'
-  , headers: getHeaders()
-  , xhrFields: {
+    url: BASE_URL + url, 
+    type: 'GET', 
+    headers: getHeaders(), 
+    timeout: 4000, 
+    xhrFields: {
       withCredentials: window.device === undefined
-    }
-  , success: function(data, text, xhr) {
+    }, 
+    success: function(data, text, xhr) {
       callback(null, xhr, data);
-    }
-  , error: function(xhr, text, error) {
-      callback(xhr.responseText, xhr);
+    }, 
+    error: function(xhr, text, error) {
+      if (attemptsLeft > 0) {
+        get(url, callback, context, --attemptsLeft);
+      } else {
+        callback(xhr.responseText || xhr.statusText, xhr);
+      }
     }
   });
-};
+}
 
 /**
  * Custom post file
@@ -111,21 +126,21 @@ module.exports.postFile = function(url, data, callback, context) {
   }
   
   $.ajax({
-    url: BASE_URL + url
-  , type: 'POST'
-  , cache: false
-  , contentType: false
-  , processData: false
-  , headers: getHeaders()
-  , xhrFields: {
+    url: BASE_URL + url, 
+    type: 'POST', 
+    cache: false, 
+    contentType: false, 
+    processData: false, 
+    headers: getHeaders(), 
+    xhrFields: {
       withCredentials: window.device === undefined
-    }
-  , data: data
-  , success: function(data, text, xhr) {
+    }, 
+    data: data, 
+    success: function(data, text, xhr) {
       callback(null, xhr, data);
-    }
-  , error: function(xhr, text, error) {
-      callback(xhr.responseText, xhr);
+    }, 
+    error: function(xhr, text, error) {
+      callback(xhr.responseText || xhr.statusText, xhr);
     }
   });
 };
