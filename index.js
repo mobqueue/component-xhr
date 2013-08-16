@@ -64,7 +64,7 @@ module.exports.post = function(url, data, callback, context) {
       callback(null, xhr, data);
     }, 
     error: function(xhr, text, error) {
-      callback(xhr.responseText || xhr.statusText, xhr);
+      callback(xhr.responseText || xhr.statusText || text, xhr);
     }
   });
 };
@@ -100,10 +100,10 @@ function get(url, callback, context, attemptsLeft) {
       callback(null, xhr, data);
     }, 
     error: function(xhr, text, error) {
-      if (attemptsLeft > 0) {
+      if (attemptsLeft > 0 && text === 'timeout') {
         get(url, callback, context, --attemptsLeft);
       } else {
-        callback(xhr.responseText || xhr.statusText, xhr);
+        callback(xhr.responseText || xhr.statusText || text, xhr);
       }
     }
   });
@@ -140,7 +140,7 @@ module.exports.postFile = function(url, data, callback, context) {
       callback(null, xhr, data);
     }, 
     error: function(xhr, text, error) {
-      callback(xhr.responseText || xhr.statusText, xhr);
+      callback(xhr.responseText || xhr.statusText || text, xhr);
     }
   });
 };
