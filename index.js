@@ -12,7 +12,7 @@ var VERSION = window.API_VERSION;
  */
 
 var headers = {
-  'X-Perfect-API-Version': VERSION, 
+  'X-Perfect-API-Version': VERSION,
   'Cache-Control': 'no-cache'
 };
 
@@ -47,24 +47,30 @@ module.exports.setHeader = function(key, value) {
 
 module.exports.post = function(url, data, callback, context) {
   callback = callback || function(){};
-  
+
   if (context) {
     callback = callback.bind(context);
   }
-  
+
   $.ajax({
-    url: BASE_URL + url, 
-    type: 'POST', 
-    headers: getHeaders(), 
+    url: BASE_URL + url,
+    dataType: 'json',
+    type: 'POST',
+    headers: getHeaders(),
     xhrFields: {
       withCredentials: window.device === undefined
-    }, 
-    data: data, 
+    },
+    data: data,
     success: function(data, text, xhr) {
       callback(null, xhr, data);
-    }, 
+    },
     error: function(xhr, text, error) {
-      callback(xhr.responseText || xhr.statusText || text, xhr);
+      var response;
+      try {
+        response = JSON.parse(xhr.responseText);
+      } catch(e) {}
+
+      callback(response || xhr.responseText || xhr.statusText || text, xhr);
     }
   });
 };
@@ -79,7 +85,7 @@ module.exports.post = function(url, data, callback, context) {
 
 function get(url, callback, context, attemptsLeft) {
   callback = callback || function(){};
-  
+
   if (context) {
     callback = callback.bind(context);
   }
@@ -89,21 +95,27 @@ function get(url, callback, context, attemptsLeft) {
   }
 
   $.ajax({
-    url: BASE_URL + url, 
-    type: 'GET', 
-    headers: getHeaders(), 
-    timeout: 4000, 
+    url: BASE_URL + url,
+    dataType: 'json',
+    type: 'GET',
+    headers: getHeaders(),
+    timeout: 4000,
     xhrFields: {
       withCredentials: window.device === undefined
-    }, 
+    },
     success: function(data, text, xhr) {
       callback(null, xhr, data);
-    }, 
+    },
     error: function(xhr, text, error) {
       if (attemptsLeft > 0 && text === 'timeout') {
         get(url, callback, context, --attemptsLeft);
       } else {
-        callback(xhr.responseText || xhr.statusText || text, xhr);
+        var response;
+        try {
+          response = JSON.parse(xhr.responseText);
+        } catch(e) {}
+
+        callback(response || xhr.responseText || xhr.statusText || text, xhr);
       }
     }
   });
@@ -111,7 +123,7 @@ function get(url, callback, context, attemptsLeft) {
 
 /**
  * Custom post file
- * 
+ *
  * @param {String} url
  * @param {Object} data
  * @param {Function} callback
@@ -120,27 +132,33 @@ function get(url, callback, context, attemptsLeft) {
 
 module.exports.postFile = function(url, data, callback, context) {
   callback = callback || function(){};
-  
+
   if (context) {
     callback = callback.bind(context);
   }
-  
+
   $.ajax({
-    url: BASE_URL + url, 
-    type: 'POST', 
-    cache: false, 
-    contentType: false, 
-    processData: false, 
-    headers: getHeaders(), 
+    url: BASE_URL + url,
+    dataType: 'json',
+    type: 'POST',
+    cache: false,
+    contentType: false,
+    processData: false,
+    headers: getHeaders(),
     xhrFields: {
       withCredentials: window.device === undefined
-    }, 
-    data: data, 
+    },
+    data: data,
     success: function(data, text, xhr) {
       callback(null, xhr, data);
-    }, 
+    },
     error: function(xhr, text, error) {
-      callback(xhr.responseText || xhr.statusText || text, xhr);
+      var response;
+      try {
+        response = JSON.parse(xhr.responseText);
+      } catch(e) {}
+
+      callback(response || xhr.responseText || xhr.statusText || text, xhr);
     }
   });
 };
