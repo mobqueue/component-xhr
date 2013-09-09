@@ -58,7 +58,7 @@ module.exports.post = function(url, data, callback, context) {
     type: 'POST',
     headers: getHeaders(),
     xhrFields: {
-      withCredentials: window.device === undefined
+      withCredentials: window.device === undefined && url.indexOf('private') !== -1
     },
     data: data,
     success: function(data, text, xhr) {
@@ -101,7 +101,7 @@ function get(url, callback, context, attemptsLeft) {
     headers: getHeaders(),
     timeout: 4000,
     xhrFields: {
-      withCredentials: window.device === undefined
+      withCredentials: window.device === undefined && url.indexOf('private') !== -1
     },
     success: function(data, text, xhr) {
       callback(null, xhr, data);
@@ -146,7 +146,7 @@ module.exports.postFile = function(url, data, callback, context) {
     processData: false,
     headers: getHeaders(),
     xhrFields: {
-      withCredentials: window.device === undefined
+      withCredentials: window.device === undefined && url.indexOf('private') !== -1
     },
     data: data,
     success: function(data, text, xhr) {
