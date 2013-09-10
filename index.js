@@ -122,6 +122,43 @@ function get(url, callback, context, attemptsLeft) {
 }
 
 /**
+ * Custom delete method
+ *
+ * @param {String} url
+ * @param {Function} callback
+ * @param {Object} context
+ */
+
+module.exports.del = function (url, callback, context) {
+  callback = callback || function(){};
+
+  if (context) {
+    callback = callback.bind(context);
+  }
+
+  $.ajax({
+    url: BASE_URL + url,
+    dataType: 'json',
+    type: 'DELETE',
+    headers: getHeaders(),
+    xhrFields: {
+      withCredentials: window.device === undefined && url.indexOf('private') !== -1
+    },
+    success: function (data, text, xhr) {
+      callback(null, xhr, data);
+    },
+    error: function (xhr, text, error) {
+      var response;
+      try {
+        response = JSON.parse(xhr.responseText);
+      } catch(e) {}
+
+      callback(response || xhr.responseText || xhr.statusText || text, xhr);
+    }
+  });
+};
+
+/**
  * Custom post file
  *
  * @param {String} url
